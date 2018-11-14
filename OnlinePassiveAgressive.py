@@ -60,17 +60,18 @@ if __name__ == '__main__':
     np.random.seed(777)
     np.random.shuffle(data)
 
-    X = data[:, 1:]
-    y = data[:, 0] * 2 - 3  # from (1,2) to (+1,-1) classification
-    n, d = X.shape
+    labels = data[:, 0] * 2 - 3  # from (1,2) to (+1,-1) classification
+    data = data[:, 1:]
+
+    n, d = data.shape
 
     trainsize = 70 * n // 100  # use 70% of dataset for training
     testsize = n - trainsize
 
-    X_train = X[:trainsize]
-    y_train = y[:trainsize]
-    X_test = X[trainsize:]
-    y_test = y[trainsize:]
+    X_train = data[:trainsize]
+    y_train = labels[:trainsize]
+    X_test = data[trainsize:]
+    y_test = labels[trainsize:]
 
     clf = OnlinePassiveAgressive(d, tao=2, C=2)
 
