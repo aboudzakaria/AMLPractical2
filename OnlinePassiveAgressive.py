@@ -8,9 +8,8 @@ import pandas as pd
 class OnlinePassiveAgressive:
     """ Online Passive-Agressive Algorithm. """
 
-    def __init__(self, d, tao=0, C=1):
-        self.w = np.zeros((d,))
-        self.d = d
+    def __init__(self, size, tao=0, C=1):
+        self.w = np.zeros((size,))
         self.C = C
 
         switch = {
