@@ -99,6 +99,8 @@ class Board_game:
 			return
 		self.si,self.sj = self.find_agent()
 		for i in range(self.T):
+			print(i)
+			sys.stdout.flush()
 			i,j = self.si,self.sj
 			gameover = False
 			while not gameover:
