@@ -170,7 +170,7 @@ class Board_game:
 if __name__ == '__main__':
     
     number_boards = 13
-    repeat_factor = 20
+    repeat_factor = 1
     
     total_games = 0
     number_wins = 0
