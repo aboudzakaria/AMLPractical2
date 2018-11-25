@@ -66,11 +66,11 @@ class Board_game:
 		train_data = self.data[indices,0:3]
 		train_labels = self.data[indices,-1]
 		
-		#old_stdout = sys.stdout
-		#sys.stdout = open(os.devnull, "w")
+		old_stdout = sys.stdout
+		sys.stdout = open(os.devnull, "w")
 		self.model.fit(train_data, train_labels, batch_size=25, epochs=1)
-		#sys.stdout.close()
-		#sys.stdout = old_stdout
+		sys.stdout.close()
+		sys.stdout = old_stdout
 
 	def predict(self,i,j,a):
 		x = [i,j,a]
@@ -101,8 +101,8 @@ class Board_game:
 			return
 		self.si,self.sj = self.find_agent()
 		for i in range(self.T):
-			print(i)
-			sys.stdout.flush()
+			#print(i)
+			#sys.stdout.flush()
 			i,j = self.si,self.sj
 			gameover = False
 			while not gameover:
@@ -204,8 +204,8 @@ class Board_game:
 
 if __name__ == '__main__':
 	
-	number_boards = 1
-	repeat_factor = 1
+	number_boards = 13
+	repeat_factor = 20
 	
 	total_games = 0
 	number_wins = 0
