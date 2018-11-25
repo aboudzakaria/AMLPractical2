@@ -9,7 +9,7 @@ from tensorflow.keras import layers
 
 class Board_game:
 
-	alpha = 0.01 # learning rate for online learning
+	#alpha = 0.01 # learning rate for online learning
 	beta = 1     # Q-learning reward parameter
 	ep = 0.4     # probability for a random move
 	T = 10000  # number of episode per game
@@ -39,8 +39,8 @@ class Board_game:
 		inputs = tf.keras.Input(shape=(3,))  # Returns a placeholder tensor
 
 		# A layer instance is callable on a tensor, and returns a tensor.
-		x = layers.Dense(5, activation='relu')(inputs)
-		x = layers.Dense(5, activation='relu')(x)
+		x = layers.Dense(3, activation='sigmoid')(inputs)
+		x = layers.Dense(3, activation='sigmoid')(x)
 		predictions = layers.Dense(1)(x)
 
 		self.model = tf.keras.Model(inputs=inputs, outputs=predictions)
@@ -59,16 +59,18 @@ class Board_game:
 	def update(self,i,j,a,y):
 		x = [i,j,a,y]
 		self.data = np.vstack((self.data,np.array(x))) 
+		if self.data.shape[0] > 1000:
+			self.data = self.data[100:]
 		k = max(1,min(int(len(self.data)/2),100))
 		indices = np.random.randint(0,len(self.data),k)
 		train_data = self.data[indices,0:3]
 		train_labels = self.data[indices,-1]
 		
-		old_stdout = sys.stdout
-		sys.stdout = open(os.devnull, "w")
-		self.model.fit(train_data, train_labels, batch_size=25, epochs=5)
-		sys.stdout.close()
-		sys.stdout = old_stdout
+		#old_stdout = sys.stdout
+		#sys.stdout = open(os.devnull, "w")
+		self.model.fit(train_data, train_labels, batch_size=25, epochs=1)
+		#sys.stdout.close()
+		#sys.stdout = old_stdout
 
 	def predict(self,i,j,a):
 		x = [i,j,a]
@@ -118,11 +120,11 @@ class Board_game:
 				#print("i,j=",i,j)
 				#invaild case (outside the board)
 				if self.outside_board(i,j):
-					y = 0
+					y = -10
 					gameover = True
 				#invaild case (on an obstacle)
 				elif self.board[i][j] == 'W':
-					y = 0
+					y = -10
 					gameover = True
 				#terminial state (win)
 				elif self.board[i][j] == 'T':
