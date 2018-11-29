@@ -33,6 +33,7 @@ class Board_game:
 
         self.play_ep = e
         self.learn_ep = e
+        self.step_lim = 1000000
 
     def outside_board(self,i,j):
         return i < 0 or i >= self.R or j < 0 or j >= self.C
@@ -72,8 +73,8 @@ class Board_game:
         for _ in range(self.T):
             i,j = self.si,self.sj
             gameover = False
-            steps_limit = 1000000000
-            while not gameover or steps_limit < 0:
+            steps_limit = self.step_lim
+            while not gameover and steps_limit > 0:
                 steps_limit -= 1
                 #choose an action 
                 if random.uniform(0, 1) <= self.learn_ep:
@@ -120,8 +121,8 @@ class Board_game:
         # make a copy of hte board to use for display
         pb = [list(self.board[q]) for q in range(len(self.board))]
         
-        steps_limit = 1000000000
-        while not gameover or steps_limit < 0:
+        steps_limit = self.step_lim
+        while not gameover and steps_limit > 0:
             steps_limit -= 1
             temp = [self.Q_function(i,j,q) for q in range(4)]
             #good = False

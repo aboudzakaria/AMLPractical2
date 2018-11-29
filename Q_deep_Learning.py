@@ -10,14 +10,13 @@ from tensorflow.keras import layers
 class Board_game:
 
 	#alpha = 0.01 # learning rate for online learning
-	beta = 1     # Q-learning reward parameter
-	ep = 0.4     # probability for a random move
+	
 	T = 10000  # number of episode per game
 	# 4 directions
 	dx = [-1, +1,  0, 0 ] 
 	dy = [ 0,  0, -1, +1]
 
-	def __init__(self,idx = 1,_random_play = False):
+	def __init__(self,idx = 1,_random_play = False,b=1,e=0.4):
 		# open file and read the board
 		with open(str(idx+1)+'.data') as f:
 			self.board = f.readlines()
@@ -31,11 +30,15 @@ class Board_game:
 		# the weights of the Q function that we will learn using online learning
 		self.si = 0
 		self.sj = 0
-		self.play_ep = 0.4
-		self.learn_ep = 0.4
+		
 		self.random_play = _random_play
 		self.data = np.zeros((1,4))        
+		self.step_lim = 1000000
+		self.beta = b     # Q-learning reward parameter
+		self.ep = e     # probability for a random move
 
+		self.play_ep = e
+		self.learn_ep = e
 		inputs = tf.keras.Input(shape=(3,))  # Returns a placeholder tensor
 
 		# A layer instance is callable on a tensor, and returns a tensor.
@@ -100,12 +103,14 @@ class Board_game:
 		if self.random_play:
 			return
 		self.si,self.sj = self.find_agent()
-		for i in range(self.T):
+		for _ in range(self.T):
 			#print(i)
 			#sys.stdout.flush()
 			i,j = self.si,self.sj
 			gameover = False
-			while not gameover:
+			steps_limit = self.step_lim
+			while not gameover and steps_limit > 0:
+				steps_limit -= 1
 				#choose an action 
 				if random.uniform(0, 1) <= self.learn_ep:
 					a = randint(0, 3)
@@ -149,8 +154,9 @@ class Board_game:
 		i,j = self.si,self.sj
 		# make a copy of hte board to use for display
 		pb = [list(self.board[q]) for q in range(len(self.board))]
-		
-		while not gameover:
+		steps_limit = self.step_lim
+		while not gameover and steps_limit > 0:
+			steps_limit -= 1
 			temp = [self.predict(i,j,q) for q in range(4)]
 			#good = False
 			pb[i][j] = 'A'
@@ -206,15 +212,50 @@ if __name__ == '__main__':
 	
 	number_boards = 13
 	repeat_factor = 20
-	
-	total_games = 0
-	number_wins = 0
-	for file_idx in range(number_boards):
-		for _ in range(repeat_factor):
-			game = Board_game(file_idx,False)
-			game.learn()
-			number_wins += game.play()
-			total_games += 1
-			print(total_games)
 
-print(number_wins/total_games)
+	betarr = [0.1, 0.25, 0.5, 1, 1.5, 2, 5, 10]
+	
+	best_accuracy = 0
+	best_beta = 0
+	
+	for b in betarr:
+		total_games = 0
+		number_wins = 0
+		for file_idx in range(number_boards):
+			for _ in range(repeat_factor):
+				game = Board_game(file_idx,False,b)
+				game.learn()
+				number_wins += game.play()
+				total_games += 1
+				#print(total_games)
+		
+		curr_acc = number_wins/total_games
+		print("Beta = ",b,'accuracy = ',end='')
+		print(curr_acc)
+		if curr_acc > best_accuracy:
+			best_accuracy = curr_acc
+			best_beta = b
+	print('Best accuracy of Best = ',best_accuracy,'Best bata = ',best_beta)
+
+	ep_arr = [.1,.2,.3,.4,.5,.6,.7]
+	
+	best_accuracy = 0
+	best_ep = 0
+	for e in ep_arr:
+		total_games = 0
+		number_wins = 0
+		for file_idx in range(number_boards):
+			for _ in range(repeat_factor):
+				game = Board_game(file_idx,False,b,e)
+				game.learn()
+				number_wins += game.play()
+				total_games += 1
+				print(total_games)
+		
+		curr_acc = number_wins/total_games
+		print("Ep = ",e,'accuracy = ',end='')
+		print(curr_acc)
+		if curr_acc > best_accuracy:
+			best_accuracy = curr_acc
+			best_ep = b
+	print('Best accuracy of Ep = ',best_accuracy,'Best Ep = ',best_beta)
