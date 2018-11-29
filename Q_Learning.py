@@ -6,14 +6,12 @@ from time import sleep # used to animate the progress
 class Board_game:
 
     alpha = 0.01 # learning rate for online learning
-    beta = 1     # Q-learning reward parameter
-    ep = 0.4     # probability for a random move
     T = 10000  # number of episode per game
     # 4 directions
     dx = [-1, +1,  0, 0 ] 
     dy = [ 0,  0, -1, +1]
 
-    def __init__(self,idx = 1,_random_play = False):
+    def __init__(self,idx = 1,_random_play = False,b=1,e=0.4):
         # open file and read the board
         with open(str(idx+1)+'.data') as f:
             self.board = f.readlines()
@@ -28,9 +26,13 @@ class Board_game:
         self.Q_function_w = [[0 for _ in range(3)] for _ in range(4)]
         self.si = 0
         self.sj = 0
-        self.play_ep = 0.4
-        self.learn_ep = 0.4
+        
         self.random_play = _random_play
+        self.beta = b    # Q-learning reward parameter
+        self.ep = e     # probability for a random move
+
+        self.play_ep = e
+        self.learn_ep = e
 
     def outside_board(self,i,j):
         return i < 0 or i >= self.R or j < 0 or j >= self.C
@@ -67,10 +69,12 @@ class Board_game:
         if self.random_play:
             return
         self.si,self.sj = self.find_agent()
-        for i in range(self.T):
+        for _ in range(self.T):
             i,j = self.si,self.sj
             gameover = False
-            while not gameover:
+            steps_limit = 1000000000
+            while not gameover or steps_limit < 0:
+                steps_limit -= 1
                 #choose an action 
                 if random.uniform(0, 1) <= self.learn_ep:
                     a = randint(0, 3)
@@ -109,13 +113,16 @@ class Board_game:
                     self.update(ii,jj,a,y)
     
     def play(self):
+        #print('start play')
         gameover = False
         win = False
         i,j = self.si,self.sj
         # make a copy of hte board to use for display
         pb = [list(self.board[q]) for q in range(len(self.board))]
         
-        while not gameover:
+        steps_limit = 1000000000
+        while not gameover or steps_limit < 0:
+            steps_limit -= 1
             temp = [self.Q_function(i,j,q) for q in range(4)]
             #good = False
             pb[i][j] = 'A'
@@ -143,22 +150,22 @@ class Board_game:
                 
             
             if self.outside_board(i,j):
-                print('O',end=' ')
+                #print('O',end=' ')
                 gameover = True
             elif self.board[i][j] == 'W':
-                print('W',end=' ')
+                #print('W',end=' ')
                 gameover = True
             elif self.board[i][j] == 'T':
                 gameover = True
                 win = True
             elif self.board[i][j] == 'P':
-                print('P',end=' ')
+                #print('P',end=' ')
                 gameover = True
 
-        if win:
-            print("Win!!")
-        else:
-            print("GameOver :(")
+        #if win:
+            #print("Win!!")
+        #else:
+        #    #print("GameOver :(")
         
         if self.show_progress:
             sleep(2)
@@ -170,16 +177,51 @@ class Board_game:
 if __name__ == '__main__':
     
     number_boards = 13
-    repeat_factor = 1
-    
-    total_games = 0
-    number_wins = 0
-    for file_idx in range(number_boards):
-        for _ in range(repeat_factor):
-            game = Board_game(file_idx,False)
-            game.learn()
-            number_wins += game.play()
-            total_games += 1
-            print(total_games)
+    repeat_factor = 50
 
-print(number_wins/total_games)
+    betarr = [0.1, 0.25, 0.5, 1, 1.5, 2, 5, 10]
+    best_accuracy = 0
+    best_beta = 0
+    
+    for b in betarr:
+        total_games = 0
+        number_wins = 0
+        for file_idx in range(number_boards):
+            for _ in range(repeat_factor):
+                game = Board_game(file_idx,False,b)
+                game.learn()
+                number_wins += game.play()
+                total_games += 1
+                #print(total_games)
+        
+        curr_acc = number_wins/total_games
+        print("Beta = ",b,'accuracy = ',end='')
+        print(curr_acc)
+        if curr_acc > best_accuracy:
+            best_accuracy = curr_acc
+            best_beta = b
+    print('Best accuracy of Best = ',best_accuracy,'Best bata = ',best_beta)
+
+    ep_arr = [.1,.2,.3,.4,.5,.6,.7]
+    
+    best_accuracy = 0
+    best_ep = 0
+    for e in ep_arr:
+        total_games = 0
+        number_wins = 0
+        for file_idx in range(number_boards):
+            for _ in range(repeat_factor):
+                game = Board_game(file_idx,False,b,e)
+                game.learn()
+                number_wins += game.play()
+                total_games += 1
+                print(total_games)
+        
+        curr_acc = number_wins/total_games
+        print("Ep = ",e,'accuracy = ',end='')
+        print(curr_acc)
+        if curr_acc > best_accuracy:
+            best_accuracy = curr_acc
+            best_ep = b
+    print('Best accuracy of Ep = ',best_accuracy,'Best Ep = ',best_beta)
+
