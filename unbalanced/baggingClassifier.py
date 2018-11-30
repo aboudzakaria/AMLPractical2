@@ -38,7 +38,7 @@ print(res)
 
 X_final = np.genfromtxt("test.csv", delimiter=',')
 
-Y__ = bbc.predict(X_test)
+Y__ = bbc.predict(X_final)
 
 np.savetxt("test_pred_labels_2.csv", Y__, delimiter=",")
 
