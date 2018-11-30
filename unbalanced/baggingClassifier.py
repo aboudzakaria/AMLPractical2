@@ -31,9 +31,9 @@ bbc.fit(X_train, Y_train)
 Y__ = bbc.predict(X_test)
 
 print(confusion_matrix(Y_test, Y__))
-coco = precision_recall_fscore_support(Y_test,Y__)
+res = precision_recall_fscore_support(Y_test,Y__)
 
-print(coco)
+print(res)
 
 
 X_final = np.genfromtxt("test.csv", delimiter=',')
