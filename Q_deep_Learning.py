@@ -11,7 +11,7 @@ class Board_game:
 
 	#alpha = 0.01 # learning rate for online learning
 	
-	T = 10000  # number of episode per game
+	T = 5000  # number of episode per game
 	# 4 directions
 	dx = [-1, +1,  0, 0 ] 
 	dy = [ 0,  0, -1, +1]
@@ -33,7 +33,7 @@ class Board_game:
 		
 		self.random_play = _random_play
 		self.data = np.zeros((1,4))        
-		self.step_lim = 1000000
+		self.step_lim = 1000
 		self.beta = b     # Q-learning reward parameter
 		self.ep = e     # probability for a random move
 
@@ -64,7 +64,7 @@ class Board_game:
 		self.data = np.vstack((self.data,np.array(x))) 
 		if self.data.shape[0] > 1000:
 			self.data = self.data[100:]
-		k = max(1,min(int(len(self.data)/2),100))
+		k = max(1,min(int(len(self.data)/2),20))
 		indices = np.random.randint(0,len(self.data),k)
 		train_data = self.data[indices,0:3]
 		train_labels = self.data[indices,-1]
@@ -211,9 +211,9 @@ class Board_game:
 if __name__ == '__main__':
 	
 	number_boards = 13
-	repeat_factor = 20
+	repeat_factor = 5
 
-	betarr = [0.1, 0.25, 0.5, 1, 1.5, 2, 5, 10]
+	betarr = [0.1, 0.25, 0.5, 1]
 	
 	best_accuracy = 0
 	best_beta = 0
@@ -237,7 +237,7 @@ if __name__ == '__main__':
 			best_beta = b
 	print('Best accuracy of Best = ',best_accuracy,'Best bata = ',best_beta)
 
-	ep_arr = [.1,.2,.3,.4,.5,.6,.7]
+	ep_arr = [.1,.2,.4,.5,.7]
 	
 	best_accuracy = 0
 	best_ep = 0
@@ -246,7 +246,7 @@ if __name__ == '__main__':
 		number_wins = 0
 		for file_idx in range(number_boards):
 			for _ in range(repeat_factor):
-				game = Board_game(file_idx,False,b,e)
+				game = Board_game(file_idx,False,best_beta,e)
 				game.learn()
 				number_wins += game.play()
 				total_games += 1
@@ -257,5 +257,5 @@ if __name__ == '__main__':
 		print(curr_acc)
 		if curr_acc > best_accuracy:
 			best_accuracy = curr_acc
-			best_ep = b
-	print('Best accuracy of Ep = ',best_accuracy,'Best Ep = ',best_beta)
+			best_ep = e
+	print('Best accuracy of Ep = ',best_accuracy,'Best Ep = ',best_ep)
