@@ -212,7 +212,7 @@ if __name__ == '__main__':
         number_wins = 0
         for file_idx in range(number_boards):
             for _ in range(repeat_factor):
-                game = Board_game(file_idx,False,b,e)
+                game = Board_game(file_idx,False,best_beta,e)
                 game.learn()
                 number_wins += game.play()
                 total_games += 1
@@ -223,6 +223,6 @@ if __name__ == '__main__':
         print(curr_acc)
         if curr_acc > best_accuracy:
             best_accuracy = curr_acc
-            best_ep = b
-    print('Best accuracy of Ep = ',best_accuracy,'Best Ep = ',best_beta)
+            best_ep = e
+    print('Best accuracy of Ep = ',best_accuracy,'Best Ep = ',best_ep)
 
