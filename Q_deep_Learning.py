@@ -11,7 +11,7 @@ class Board_game:
 
 	#alpha = 0.01 # learning rate for online learning
 	
-	T = 5000  # number of episode per game
+	T = 100  # number of episode per game
 	# 4 directions
 	dx = [-1, +1,  0, 0 ] 
 	dy = [ 0,  0, -1, +1]
@@ -33,7 +33,7 @@ class Board_game:
 		
 		self.random_play = _random_play
 		self.data = np.zeros((1,4))        
-		self.step_lim = 1000
+		self.step_lim = 100
 		self.beta = b     # Q-learning reward parameter
 		self.ep = e     # probability for a random move
 
@@ -63,17 +63,14 @@ class Board_game:
 		x = [i,j,a,y]
 		self.data = np.vstack((self.data,np.array(x))) 
 		if self.data.shape[0] > 1000:
-			self.data = self.data[100:]
-		k = max(1,min(int(len(self.data)/2),20))
-		indices = np.random.randint(0,len(self.data),k)
-		train_data = self.data[indices,0:3]
-		train_labels = self.data[indices,-1]
-		
-		old_stdout = sys.stdout
-		sys.stdout = open(os.devnull, "w")
-		self.model.fit(train_data, train_labels, batch_size=25, epochs=1)
-		sys.stdout.close()
-		sys.stdout = old_stdout
+			train_data = self.data[,0:3]
+			train_labels = self.data[,-1]
+			old_stdout = sys.stdout
+			sys.stdout = open(os.devnull, "w")
+			self.model.fit(train_data, train_labels, batch_size=25, epochs=2)
+			sys.stdout.close()
+			sys.stdout = old_stdout
+			self.data = np.zeros((1,4))   
 
 	def predict(self,i,j,a):
 		x = [i,j,a]
@@ -156,14 +153,15 @@ class Board_game:
 		pb = [list(self.board[q]) for q in range(len(self.board))]
 		steps_limit = self.step_lim
 		while not gameover and steps_limit > 0:
-			steps_limit -= 1
+			
 			temp = [self.predict(i,j,q) for q in range(4)]
 			#good = False
 			pb[i][j] = 'A'
 			if self.show_progress:
 				self.board_print(pb)
-			
-			while True:
+			coco_temp = 20
+			while steps_limit > 0:
+				steps_limit -= 1
 				is_random_choice = False
 				if self.random_play or random.uniform(0, 1) <= self.play_ep:
 					a = randint(0, 3)
