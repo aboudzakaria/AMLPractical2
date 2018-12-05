@@ -250,7 +250,7 @@ if __name__ == '__main__':
 				game.learn()
 				number_wins += game.play()
 				total_games += 1
-				print(total_games)
+				#print(total_games)
 		
 		curr_acc = number_wins/total_games
 		print("Ep = ",e,'accuracy = ',end='')
