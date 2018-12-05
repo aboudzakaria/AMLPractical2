@@ -1,0 +1,17 @@
+Beta =  0.1 accuracy = 0.5184615384615384
+Beta =  0.25 accuracy = 0.52
+Beta =  0.5 accuracy = 0.5292307692307693
+Beta =  1 accuracy = 0.36
+Beta =  1.5 accuracy = 0.37538461538461537
+Beta =  2 accuracy = 0.40307692307692305
+Beta =  5 accuracy = 0.4523076923076923
+Beta =  10 accuracy = 0.39692307692307693
+Best accuracy of Best =  0.5292307692307693 Best bata =  0.5
+Ep =  0.1 accuracy = 0.28923076923076924
+Ep =  0.2 accuracy = 0.42
+Ep =  0.3 accuracy = 0.43538461538461537
+Ep =  0.4 accuracy = 0.49846153846153846
+Ep =  0.5 accuracy = 0.6015384615384616
+Ep =  0.6 accuracy = 0.6846153846153846
+Ep =  0.7 accuracy = 0.7323076923076923
+Best accuracy of Ep =  0.7323076923076923 Best Ep =  0.7

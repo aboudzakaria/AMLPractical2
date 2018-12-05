@@ -33,7 +33,7 @@ class Board_game:
 
         self.play_ep = e
         self.learn_ep = e
-        self.step_lim = 1000000
+        self.step_lim = 1000
 
     def outside_board(self,i,j):
         return i < 0 or i >= self.R or j < 0 or j >= self.C
@@ -216,7 +216,7 @@ if __name__ == '__main__':
                 game.learn()
                 number_wins += game.play()
                 total_games += 1
-                print(total_games)
+                #print(total_games)
         
         curr_acc = number_wins/total_games
         print("Ep = ",e,'accuracy = ',end='')
