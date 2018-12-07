@@ -9,17 +9,9 @@ N_ARMS = 8
 MU, SIGMA = 0.5, 0.1
 
 np.random.seed(5678)
-D = np.random.normal(MU, SIGMA, N_ARMS)
+D = np.random.normal(MU, SIGMA, N_ARMS) - 0.1
 print(f"reward probabilities:\n{D}")
 np.random.seed(None)
-
-
-# plot distributions
-x_axis = np.arange(0, 1, 0.001)
-for i in range(N_ARMS):
-    plt.plot(x_axis, norm.pdf(x_axis, D[i], SIGMA), label=f"arm_{i}")
-plt.legend()
-#plt.show()
 
 
 def pull_arm(arm):

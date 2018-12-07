@@ -120,6 +120,44 @@ if __name__ == '__main__':
 
     ### OPA
 
+    clf = OnlinePassiveAgressive(d, tao=0, C=200)
+
+    correct = 0
+    start = time()
+    for i in range(trainsize):
+        yihat = clf.predict(X_train[i])
+        correct += int(y_train[i] == yihat)
+        clf.online_learn(X_train[i], y_train[i])
+
+    print(f'OPA-t0 train online accuracy (noise): {correct * 100 // trainsize}%')
+
+    correct = 0
+    start = time()
+    for i in range(testsize):
+        yihat = clf.predict(X_test[i])
+        correct += int(y_test[i] == yihat)
+
+    print(f'OPA-t0 test accuracy (noise): {correct * 100 // testsize}%')
+
+    clf = OnlinePassiveAgressive(d, tao=1, C=200)
+
+    correct = 0
+    start = time()
+    for i in range(trainsize):
+        yihat = clf.predict(X_train[i])
+        correct += int(y_train[i] == yihat)
+        clf.online_learn(X_train[i], y_train[i])
+
+    print(f'OPA-t1 train online accuracy (noise): {correct * 100 // trainsize}%')
+
+    correct = 0
+    start = time()
+    for i in range(testsize):
+        yihat = clf.predict(X_test[i])
+        correct += int(y_test[i] == yihat)
+
+    print(f'OPA-t1 test accuracy (noise): {correct * 100 // testsize}%')
+
     clf = OnlinePassiveAgressive(d, tao=2, C=200)
 
     correct = 0
@@ -129,7 +167,7 @@ if __name__ == '__main__':
         correct += int(y_train[i] == yihat)
         clf.online_learn(X_train[i], y_train[i])
 
-    print(f'OPA train online accuracy (noise): {correct * 100 // trainsize}%')
+    print(f'OPA-t2 train online accuracy (noise): {correct * 100 // trainsize}%')
 
     correct = 0
     start = time()
@@ -137,4 +175,4 @@ if __name__ == '__main__':
         yihat = clf.predict(X_test[i])
         correct += int(y_test[i] == yihat)
 
-    print(f'OPA test accuracy (noise): {correct * 100 // testsize}%')
+    print(f'OPA-t2 test accuracy (noise): {correct * 100 // testsize}%')
