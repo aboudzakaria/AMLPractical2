@@ -63,8 +63,8 @@ class Board_game:
 		x = [i,j,a,y]
 		self.data = np.vstack((self.data,np.array(x))) 
 		if self.data.shape[0] > 1000:
-			train_data = self.data[,0:3]
-			train_labels = self.data[,-1]
+			train_data = self.data[:,0:3]
+			train_labels = self.data[:,-1]
 			old_stdout = sys.stdout
 			sys.stdout = open(os.devnull, "w")
 			self.model.fit(train_data, train_labels, batch_size=25, epochs=2)
